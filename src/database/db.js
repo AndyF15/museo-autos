@@ -1,6 +1,5 @@
 require('dotenv').config(); // Esto carga los datos del archivo .env
-const mysql = require('mysql2');
-
+const mysql = require('mysql2/promise');
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
