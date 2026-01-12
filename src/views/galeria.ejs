@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .car-card {
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        /* Clase para el resplandor de fondo */
+        .glow-effect {
+            position: absolute;
+            inset: 0;
+            filter: blur(40px);
+            z-index: -10;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+<header class="p-10 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+    
+    <div class="flex flex-col">
+        <a href="/" class="text-red-500 hover:text-white transition text-[10px] font-black tracking-[0.3em] uppercase mb-2">
+            ← INICIO
+        </a>
+        <h1 class="text-6xl font-black italic tracking-tighter uppercase text-white">
+            <%= (locals.categoria) ? categoria : 'MUSEUM' %>
+        </h1>
+    </div>
+
+    <div class="relative flex items-center gap-6 group">
+        
+        <% if (locals.categoria && categoria === 'LEMANS-PROTOTYPE') { %>
+            <div class="glow-effect bg-blue-600 rounded-full"></div>
+            <img src="/img/MICHELIN.jpg" alt="Michelin" 
+                 class="h-28 w-auto hover:-translate-y-4 hover:scale-110 transition-all duration-500 cursor-pointer drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+
+        <% } else if (locals.categoria && categoria === 'JDM') { %>
+            <div class="glow-effect bg-red-600 rounded-full"></div>
+            <img src="/img/LOGO_JDM.jpg" alt="Japan" 
+                 class="h-24 w-auto drop-shadow-[0_0_20px_rgba(255,0,0,0.5)] 
+                        hover:-translate-y-4 hover:scale-110 transition-all duration-500 cursor-pointer">
+
+        <% } else if (locals.categoria && categoria === 'GT') { %>
+            <div class="glow-effect bg-yellow-500 rounded-full"></div>
+            <img src="/img/LOGO_GT.jpg" alt="GT" 
+                 class="h-24 w-auto hover:-translate-y-4 hover:scale-110 transition-all duration-500 cursor-pointer">
+          
+        <% } else if (locals.categoria && categoria === 'GT-MUSCLE') { %>
+            <div class="glow-effect bg-orange-600 rounded-full"></div>
+            <img src="/img/LOGO_MUSCLECARS.jpg" alt="Muscle" 
+                 class="h-24 w-auto hover:-translate-y-4 hover:scale-110 transition-all duration-500 cursor-pointer">
+
+          
+        <% } else { %>
+            <div class="flex flex-col items-end">
+                <p class="text-gray-500 font-mono text-[10px] tracking-[0.5em] uppercase">Private Collection</p>
+ 
+        <% } %>
+    </div>
+</header>
+
+<main class="p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <% if (typeof autos !== 'undefined' && autos.length > 0) { %>
+        <% autos.forEach(auto => { %>
+            <div class="car-card rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-2 transition-all duration-500 border border-white/5">
+                
+                <div class="aspect-square overflow-hidden bg-neutral-900">
+                    <img src="<%= auto.imagen_url %>" alt="<%= auto.nombre %>" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                </div>
+
+                <div class="p-6 bg-gradient-to-b from-neutral-900 to-black">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold uppercase tracking-tighter"><%= auto.nombre %></h2>
+                        <span class="text-red-600 font-mono text-xs"><%= auto.año %></span>
+                    </div>
+                    
+                    <p class="text-gray-400 text-xs leading-relaxed line-clamp-3 mb-6 font-light">
+                        <%= auto.descripcion %>
+                    </p>
+
+                    <div class="flex border-t border-white/10 pt-4 justify-between">
+                        <div class="text-center">
+                            <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Potencia</p>
+                            <p class="text-sm font-black italic"><%= auto.hp %> HP</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Categoría</p>
+                            <p class="text-sm font-black italic text-red-500"><%= auto.categoria %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div class="col-span-full text-center py-20">
+            <p class="text-gray-600 font-mono tracking-widest">NO CARS FOUND IN THIS SECTION</p>
+        </div>
+    <% } %>
+</main>
+</body>
+</html>
