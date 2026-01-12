@@ -1,20 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../database/db'); // Importamos la conexión a MySQL
-
-// Ruta para ver autos por categoría
+// Ruta para ver autos por categoría (MODIFICADA)
 router.get('/categoria/:tipo', async (req, res) => {
-    const categoriaSeleccionada = req.params.tipo;
+    // Convertimos lo que viene en la URL a MAYÚSCULAS
+    const categoriaSeleccionada = req.params.tipo.toUpperCase();
     
     try {
-        // Hacemos la consulta a MySQL filtrando por la categoría de la URL
-        // Usamos [rows] porque db.query devuelve un array donde el primer elemento son los resultados
-        const [rows] = await db.query('SELECT * FROM autos WHERE categoria = ?', [categoriaSeleccionada]);
+        // Ahora buscamos siempre en mayúsculas
+        const [rows] = await db.query('SELECT * FROM autos WHERE UPPER(categoria) = ?', [categoriaSeleccionada]);
         
-        // Renderizamos "galeria.ejs" pasándole los datos necesarios
+        console.log(`Buscando categoría: ${categoriaSeleccionada}. Encontrados: ${rows.length}`);
+
         res.render('galeria', { 
             autos: rows, 
-            categoria: categoriaSeleccionada, // Esta es la que activa al Michelin
+            categoria: categoriaSeleccionada, 
             titulo: categoriaSeleccionada 
         });
     } catch (err) {
@@ -22,26 +19,3 @@ router.get('/categoria/:tipo', async (req, res) => {
         res.status(500).send('Error al obtener los autos');
     }
 });
-
-// Ruta para ver el formulario de Admin
-router.get('/admin', (req, res) => {
-    res.render('admin');
-});
-
-// Ruta para procesar el formulario de agregar auto
-router.post('/admin/add', async (req, res) => {
-    const { nombre, categoria, descripcion, imagen_url, hp, año } = req.body;
-    
-    try {
-        await db.query(
-            'INSERT INTO autos (nombre, categoria, descripcion, imagen_url, hp, año) VALUES (?, ?, ?, ?, ?, ?)',
-            [nombre, categoria, descripcion, imagen_url, hp, año]
-        );
-        res.redirect('/'); // Al terminar, nos manda al inicio para ver el cambio
-    } catch (err) {
-        console.error("Error al insertar:", err);
-        res.status(500).send('Error al guardar el auto');
-    }
-});
-
-module.exports = router;
